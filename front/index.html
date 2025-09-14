@@ -6,8 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
   </head>
-  <body>
-    <div id="mpp" style="width: 100vw; height: 80vh;"></div>
+  <body class="flex flex-col min-h-screen">
+    <header class="w-full flex justify-end p-4 bg-base-100 shadow">
+      <div id="auth-buttons" class="flex space-x-2"></div>
+    </header>
+
+    <div id="mpp" class="w-full" style="height: 80vh;"></div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
