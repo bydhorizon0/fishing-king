@@ -1,0 +1,38 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "낚시금지구역"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              126.92,
+              37.525
+            ],
+            [
+              126.935,
+              37.525
+            ],
+            [
+              126.935,
+              37.535
+            ],
+            [
+              126.92,
+              37.535
+            ],
+            [
+              126.92,
+              37.525
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.5'
+	id 'io.spring.dependency-management' version '1.1.7'
+    id 'nu.studer.jooq' version '9.0' // JOOQ 코드 생성을 위한 플러그인
+}
+
+group = 'com'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    implementation("io.jsonwebtoken:jjwt-api:0.12.7")
+    implementation("io.jsonwebtoken:jjwt-impl:0.12.7")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.12.7")
+    implementation 'org.hibernate:hibernate-spatial:7.0.10.Final'
+    implementation 'org.locationtech.jts:jts-core:1.20.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // JOOQ 코드 생성을 위한 의존성 - 버전을 명시적으로 지정
+    jooqGenerator 'com.mysql:mysql-connector-j:9.4.0'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+    compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+jooq {
+    version = "3.19.25"
+
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = true
+
+            generationTool {
+                logging = org.jooq.meta.jaxb.Logging.WARN
+
+                jdbc {
+                    driver = 'com.mysql.cj.jdbc.Driver'
+                    url = 'jdbc:mysql://localhost:3306/fishing_king'
+                    user = 'root'
+                    password = 'root123'
+                }
+
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+
+                    database {
+                        name = 'org.jooq.meta.mysql.MySQLDatabase'
+                        inputSchema = 'jooqdb'  // URL의 데이터베이스 이름과 일치시킴
+
+                        forcedTypes {
+                            // POINT 타임 변환
+                            forcedType {
+                                userType = "org.locationtech.jts.geom.Point"
+                                converter = "com.fishing_king.jooq.PointConverter"
+                                includeTypes = "POINT"
+                            }
+                            // TINYINT(1) -> Boolean 변환
+                            forcedType {
+                                name = "BOOLEAN" // jOOQ 타입 이름
+                                userType = "java.lang.Boolean" // Java 타입
+                                includeTypes = "TINYINT\\(1\\)" // DB 타입
+                                includeExpression = ".*" // 모든 컬럼에 적용, 특정 컬럼만 적용 가능
+                            }
+                        }
+                    }
+
+                    target {
+                        packageName = 'com.jooq.generated'
+                        directory = 'src/main/java/generated'
+                    }
+
+                    generate {
+                        relations = true
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                }
+            }
+        }
+    }
+}
+
+// JOOQ 코드 생성이 컴파일 전에 실행되도록 설정
+tasks.named('compileJava').configure {
+    it.dependsOn(tasks.named('generateJooq'))
+}
+
+tasks.named('compileTestJava').configure {
+    it.dependsOn(tasks.named('generateJooq'))
+}

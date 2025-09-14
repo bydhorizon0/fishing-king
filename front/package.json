@@ -1,0 +1,25 @@
+{
+  "name": "first-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npx @tailwindcss/cli -i ./src/style.css -o  ./src/main.css --watch\" \"vite\"",
+    "build": "tsc && vite build",
+    "build:css": "npx @tailwindcss/cli -i ./src/style.css -o  ./src/main.css --minify",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.20",
+    "concurrently": "^9.2.1",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.2"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.12",
+    "@tailwindcss/vite": "^4.1.13",
+    "daisyui": "^5.1.7",
+    "leaflet": "^1.9.4",
+    "tailwindcss": "^4.1.13"
+  }
+}
