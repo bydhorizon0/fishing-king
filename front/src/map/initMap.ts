@@ -2,7 +2,7 @@ import L from "leaflet";
 
 export default function initMap(): L.Map {
   // HTML div 타입 지정
-  const mapDiv = document.querySelector<HTMLDivElement>("#mpp")!;
+  const mapDiv = document.querySelector<HTMLDivElement>("#map")!;
 
   // 지도 생성
   const map: L.Map = L.map(mapDiv, {
